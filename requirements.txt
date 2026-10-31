@@ -1,0 +1,11 @@
+# Direct dependencies, exact versions used for Increment 1 (Python 3.13.5, Linux x86_64)
+numpy==2.5.4
+scipy==1.18.1
+matplotlib==3.11.2
+pymatgen==2026.10.24
+ase==3.29.0
+pytest==9.2.0
+jupyter==1.1.1
+nbconvert==7.17.2
+nbformat==5.11.1
+ipykernel==7.4.0
