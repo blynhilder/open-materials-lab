@@ -1,0 +1,9 @@
+[project]
+name = "open-materials-lab-xtal"
+version = "0.1.0"
+description = "Teaching-grade crystallography and powder XRD simulation (Open Materials Lab, increment 1)"
+requires-python = ">=3.10"
+
+[tool.pytest.ini_options]
+testpaths = ["tests"]
+pythonpath = ["src"]
