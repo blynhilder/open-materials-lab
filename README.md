@@ -1,4 +1,4 @@
-# Open Materials Lab — Increment 1：晶体结构 → 粉末 XRD 模拟
+# Open Materials Lab — Increment 1–2：粉末 XRD 模拟 + NIST SRM 640 基准
 
 > **教学模拟 (teaching simulation)，不是实验测量 (not experimental measurement)。**
 > 本仓库是对教科书级晶体学计算的**可复现实现与交叉验证**，不包含任何原创性科研结论。
@@ -30,22 +30,28 @@ open-materials-lab/
 │   ├── Si_COD_9011998.cif
 │   ├── Al_COD_9012002.cif
 │   ├── Fe_COD_9008536.cif
-│   └── dabax_f0_InterTables.dat   # Cromer–Mann 系数 (Int. Tables Vol. C, via ESRF DABAX)
+│   ├── dabax_f0_InterTables.dat   # Cromer–Mann 系数 (Int. Tables Vol. C, via ESRF DABAX)
+│   └── nist/                 # NIST SRM 640e/640f 证书 PDF + JSON/CSV 转录 (Increment 2)
 ├── src/xtal/
 │   ├── cif.py                # 最小 CIF 解析 + 对称操作展开
-│   ├── lattice.py            # 度规张量, d_hkl, Bragg 角
+│   ├── lattice.py            # 度规张量, d_hkl, Bragg 角, cubic_bragg_two_theta
 │   ├── formfactor.py         # f0(s) Cromer–Mann
 │   ├── structure_factor.py   # F(hkl)
 │   ├── extinction.py         # 解析消光规则与推导
 │   ├── powder.py             # 多重性, LP 因子, 粉末花样, Gaussian 展宽
 │   └── compare.py            # 与 pymatgen 对比 (唯一导入 pymatgen 的模块)
-├── tests/test_xtal.py        # 53 个 pytest 测试
+├── tests/
+│   ├── test_xtal.py          # Increment 1 pytest
+│   └── test_nist_srm640.py   # Increment 2 NIST SRM 640 基准测试
 ├── scripts/
 │   ├── run_validation.py     # 一键生成验证表与图
+│   ├── run_nist_srm640_benchmark.py  # NIST SRM 640 晶格/峰位基准 (Increment 2)
 │   └── build_notebook.py     # 生成 notebook
+├── docs/PROGRESS.md          # 增量进度与下一步
 ├── notebooks/01_xrd_si_al_fe.ipynb (+ .html)   # 已用 nbconvert 完整执行
 ├── figures/{Si,Al,Fe}_xrd_own_vs_pymatgen.png
-└── results/validation_*.csv, validation_summary.md, pytest_log.txt
+├── figures/Si_nist_srm640e_peak_positions.png
+└── results/validation_*.csv, validation_summary.md, nist_srm640_*.csv/.md
 ```
 
 ## 如何复现 (How to reproduce)
@@ -54,7 +60,8 @@ open-materials-lab/
 python3 -m venv .venv && source .venv/bin/activate
 pip install -r requirements.txt
 python -m pytest -v                         # 运行全部测试
-python scripts/run_validation.py            # 生成 results/ 与 figures/
+python scripts/run_validation.py            # 生成 results/ 与 figures/ (Increment 1)
+python scripts/run_nist_srm640_benchmark.py # NIST SRM 640 基准 (Increment 2)
 cd notebooks && jupyter nbconvert --to notebook --execute --inplace 01_xrd_si_al_fe.ipynb
 ```
 
@@ -107,11 +114,35 @@ cd notebooks && jupyter nbconvert --to notebook --execute --inplace 01_xrd_si_al
 2. 强度差异 < 1（满分 100），来源是**原子散射因子表不同**（本项目用 Int. Tables Vol. C 的 Cromer–Mann 参数；pymatgen 用自带的另一套参数与 Mott–Bethe 形式公式）。把 pymatgen 的 f(s) 代入本代码后差异降至 ~10⁻¹⁴，说明 F(hkl)、多重性、LP 因子实现一致。
 3. 消光：对 0 ≤ h,k,l ≤ 5 的全部 hkl，数值 |F| 与解析公式一致，且非零 ⇔ 解析规则判定"允许"。
 
+
+## Increment 2 — NIST SRM 640 Si 晶格 / 峰位基准 (lattice & peak-position benchmark)
+
+> **教学模拟 + 文献/COD 与 NIST 认证标准对比。** 本项目**没有**测量 SRM 粉末；证书 Table 1 为 NIST *information values* 的转录。不声称创新性。
+
+对照 NIST SRM **640e** (证书 2015-10-29) 与 **640f** (证书 2019-02-26) 的认证晶格常数，以及证书 Table 1（Cu Kα λ = 0.15405929 nm）峰位信息值。证书 PDF、SHA-256、机读 JSON/CSV 见 `data/nist/` 与 `data/SOURCES.md`。完整表格见 `results/nist_srm640_benchmark.md`。
+
+| 量 | 数值 |
+|---|---|
+| COD Si a (9011998, 298.15 K) | 5.430941 Å |
+| NIST 640e certified a (22.5 °C) | 5.431179 Å ± 0.00008 Å |
+| NIST 640f certified a (22.5 °C) | 5.431144 Å ± 0.00008 Å |
+| Δa (COD − 640e) | −0.000238 Å (**−43.82 ppm**) |
+| Δa (COD − 640f) | −0.000203 Å (**−37.38 ppm**) |
+| max \|Δ2θ\| 用 640e 认证 a + 证书 λ 重算 Table 1 | < 0.001° (~0.00048°) |
+| max \|Δ2θ\| 用 640f 认证 a + 证书 λ 重算 Table 1 | < 0.001° (~0.00050°) |
+
+解读：
+1. 用 NIST 认证 a 与证书波长重算 Bragg 2θ，与证书 Table 1 在 0.001° 量级内一致 —— 验证立方 Bragg 实现与证书转录，**不是**对 SRM 粉末的实验测量。
+2. COD a 与 NIST 认证 a 相差约 40 ppm 量级，且温度略有不同（298.15 K vs 22.5 °C）；未做热膨胀修正。
+3. 另用 COD a + 本项目 λ=1.5406 Å 对比 640e Table 1，仅作峰位灵敏度的教学示意（混合了不同 a 与略不同的 λ）。
+
+进度与下一步见 [`docs/PROGRESS.md`](docs/PROGRESS.md)。下一步拟议：**各向同性 Debye–Waller B 因子**（文献引用的 B 值）。
+
 ## 局限 (Limitations)
 
 - **教学模拟**：无 Debye–Waller (B = 0)、无吸收、无择优取向、无 Kα2、无仪器函数、无反常色散 f′/f″；Gaussian 展宽 FWHM = 0.15° 只是示意。高角峰的相对强度因此系统性偏高。
 - 球形原子模型中 Si(222) 严格为零；真实 Si 晶体中可观察到很弱的 (222) 反射（源于成键电荷分布与非谐热振动），本模型不能描述。
-- 峰位与 pymatgen 一致只证明代码一致，**尚未**与实验衍射数据或标准参考物质对比。
+- 峰位与 pymatgen 一致只证明代码一致；与 NIST SRM 640 认证晶格常数 / Table 1 峰位的对比见 **Increment 2**（仍非本实验室对 SRM 粉末的测量）。
 - 自写 CIF 解析器只覆盖本项目所需字段，不是通用 CIF 解析器。
 - 只验证了立方晶系的数值结果；通用度规张量公式仅用一个六方算例做了单元测试。
 
@@ -121,6 +152,7 @@ cd notebooks && jupyter nbconvert --to notebook --execute --inplace 01_xrd_si_al
 - COD 9011998 (Si; Hom, Kiszenick & Post 1975)、9012002 (Al; Straumanis 1949)、9008536 (α-Fe; Wyckoff 1963)，https://www.crystallography.net/cod/
 - Cromer–Mann 系数：International Tables for X-ray Crystallography Vol. C (1995)，经 ESRF DABAX `f0_InterTables.dat`
 - pymatgen：Ong et al., Comput. Mater. Sci. 68, 314 (2013)
+- NIST SRM 640e / 640f 证书（下载 2026-11-07）：https://tsapps.nist.gov/srmext/certificates/archives/640e.pdf 、…/640f.pdf
 
 ## 许可与诚信声明
 

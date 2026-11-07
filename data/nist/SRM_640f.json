@@ -1,0 +1,41 @@
+{
+  "srm_id": "640f",
+  "title": "NIST SRM 640f — Line Position and Line Shape Standard for Powder Diffraction (Silicon Powder)",
+  "certificate_url": "https://tsapps.nist.gov/srmext/certificates/archives/640f.pdf",
+  "local_pdf": "data/nist/SRM_640f_certificate.pdf",
+  "certificate_issue_date": "2019-02-26",
+  "download_date": "2026-11-07",
+  "download_timezone": "Asia/Shanghai (UTC+8)",
+  "sha256": "219e337b4eaec8b054fe3f568955700e8866411750eab3975c77cd047d8878ff",
+  "temperature_C": 22.5,
+  "certified_lattice_parameter": {
+    "value_nm": 0.5431144,
+    "uncertainty_nm": 0.000008,
+    "coverage_factor_k": 2,
+    "value_Angstrom": 5.431144,
+    "uncertainty_Angstrom": 0.00008,
+    "note": "NIST certified value (transcription). 1 nm = 10 Å."
+  },
+  "table1_wavelength": {
+    "value_nm": 0.15405929,
+    "value_Angstrom": 1.5405929,
+    "note": "Cu Kα radiation wavelength stated on certificate Table 1 header"
+  },
+  "table1_peak_positions": {
+    "note": "NIST information values (not certified). Transcription of certificate Table 1. Units: degrees 2θ.",
+    "reflections": [
+      {"h": 1, "k": 1, "l": 1, "two_theta_deg": 28.441},
+      {"h": 2, "k": 2, "l": 0, "two_theta_deg": 47.301},
+      {"h": 3, "k": 1, "l": 1, "two_theta_deg": 56.120},
+      {"h": 4, "k": 0, "l": 0, "two_theta_deg": 69.127},
+      {"h": 3, "k": 3, "l": 1, "two_theta_deg": 76.373},
+      {"h": 4, "k": 2, "l": 2, "two_theta_deg": 88.026},
+      {"h": 5, "k": 1, "l": 1, "two_theta_deg": 94.947},
+      {"h": 4, "k": 4, "l": 0, "two_theta_deg": 106.702},
+      {"h": 5, "k": 3, "l": 1, "two_theta_deg": 114.085},
+      {"h": 6, "k": 2, "l": 0, "two_theta_deg": 127.535},
+      {"h": 5, "k": 3, "l": 3, "two_theta_deg": 136.882}
+    ]
+  },
+  "disclaimer": "These are transcriptions of NIST certificate values for teaching/benchmark use. Open Materials Lab did NOT measure SRM powder. Not a claim of novelty."
+}

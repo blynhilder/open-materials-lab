@@ -31,3 +31,20 @@ COD 文件说明：数据由 American Mineralogist Crystal Structure Database (A
 - pymatgen 2026.10.24 `pymatgen.analysis.diffraction.xrd.XRDCalculator`（Ong et al., *Comput. Mater. Sci.* 68, 314–319 (2013), doi:10.1016/j.commatsci.2012.10.028）。
   其原子散射因子使用包内 `atomic_scattering_params.json`，公式 f(s) = Z − 41.78214·s²·Σ a_i exp(−b_i s²)（源码 docstring 称形式依据 De Graef & McHenry, *Structure of Materials* 第 11–12 章；源码未注明系数表的具体出处）。
 - ASE 3.29.0：仅用于独立检查 CIF 读取的原子数与晶胞参数。
+
+## NIST SRM 640 硅粉衍射标准 (Silicon powder diffraction SRMs)
+
+下载日期 (download date): **2026-11-07** (Asia/Shanghai, UTC+8)，通过 `curl` 从 NIST SRM 证书归档公开 URL 获取。
+用途：Increment 2 教学基准 —— 将 COD Si 晶格常数与 NIST **认证**晶格常数对比，并用认证 a + 证书波长重算 Bragg 2θ，核对证书 Table 1 的 *information values*。
+**本项目未测量 SRM 粉末；下列数值均为证书转录，不是本实验室测量结果。**
+
+| 文件 | SRM | URL | 证书发布日期 | 认证 a (22.5 °C) | Table 1 λ | SHA-256 |
+|---|---|---|---|---|---|---|
+| `nist/SRM_640e_certificate.pdf` | 640e | https://tsapps.nist.gov/srmext/certificates/archives/640e.pdf | 29 October 2015（原始证书 20 October 2014） | 0.5431179 nm ± 0.000008 nm (k=2) = 5.431179 Å ± 0.00008 Å | 0.15405929 nm = 1.5405929 Å | 87c21e029cfd1b00ea7a97add759a3d1730b49f629ccd83c15de90adf1d29042 |
+| `nist/SRM_640f_certificate.pdf` | 640f | https://tsapps.nist.gov/srmext/certificates/archives/640f.pdf | 26 February 2019 | 0.5431144 nm ± 0.000008 nm (k=2) = 5.431144 Å ± 0.00008 Å | 0.15405929 nm = 1.5405929 Å | 219e337b4eaec8b054fe3f568955700e8866411750eab3975c77cd047d8878ff |
+
+机读转录（与证书 Table 1 一致，非本项目测量）：
+- `nist/SRM_640e.json`, `nist/SRM_640e_table1.csv`
+- `nist/SRM_640f.json`, `nist/SRM_640f_table1.csv`
+
+Table 1 注释：证书标明这些峰位为 **information values**（无给出不确定度），由认证晶格常数与给定 Cu Kα 波长计算得到，不能用于建立计量溯源。

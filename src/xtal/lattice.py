@@ -38,3 +38,12 @@ def bragg_two_theta(d, wavelength=1.5406):
     s = wavelength / (2.0 * np.asarray(d, dtype=float))
     with np.errstate(invalid="ignore"):
         return np.degrees(2.0 * np.arcsin(np.where(s <= 1.0, s, np.nan)))
+
+
+def cubic_bragg_two_theta(hkl, a, wavelength=1.5406):
+    """Cubic Bragg 2θ (degrees) from lattice constant a (Å), Miller indices, and λ (Å).
+
+    Convenience wrapper: d = a / sqrt(h²+k²+l²), then 2θ = 2 arcsin(λ / 2d).
+    Returns NaN if the reflection is inaccessible (λ/2d > 1).
+    """
+    return bragg_two_theta(d_spacing_cubic(hkl, a), wavelength=wavelength)
